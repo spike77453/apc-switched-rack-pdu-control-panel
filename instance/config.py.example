@@ -1,0 +1,11 @@
+APC_PDUS = [
+    {
+        'hostname': 'apcPDU.example.com',         # Hostname                  :: Enter the IP address or FQDN of the PDU
+        'security_username': 'SNMPUser',          # User Name                 :: Administration -> Network -> SNMPv3: user profiles -> choose profile from list -> User Name | NOTE: The SNMP user name can contain up to 32 characters in length and include any combination of alphanumeric characters (uppercase letters, lowercase letters, and numbers). ⚠️  Spaces not allowed.
+        'auth_password': '',                      # Authentication Passphrase :: Administration -> Network -> SNMPv3: user profiles -> choose profile from list -> Authentication Passphrase | NOTE: The password must be 15-32 ASCII characters long. ⚠️ Special characters not allowed.
+        'auth_protocol': 'MD5',                   # Authentication Protocol   :: Administration -> Network -> SNMPv3: user profiles -> choose profile from list -> Authentication Protocol
+        'privacy_password': '',                   # Privacy Passphrase        :: Administration -> Network -> SNMPv3: user profiles -> choose profile from list -> Privacy Passphrase | NOTE: The password must be 15-32 ASCII characters long. ⚠️ Special characters not allowed.
+        'privacy_protocol': 'DES',                # Privacy Protocol          :: Administration -> Network -> SNMPv3: user profiles -> choose profile from list -> Privacy Protocol
+        'security_level': 'auth_without_privacy', # Security Level            :: Set desired security level: no_auth_or_privacy | auth_without_privacy | auth_with_privacy | More detail: https://easysnmp.readthedocs.io/en/latest/session_api.html?highlight=security_level#easysnmp.Session
+    },
+]

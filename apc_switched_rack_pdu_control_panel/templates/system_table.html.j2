@@ -1,0 +1,32 @@
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="A Python based Control panel to control multiple APC Switched Rack PDUs via SNMPv3.">
+    <meta name="author" content="https://github.com/spike77453">
+    <title>APC | Switched Rack PDU</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/lib/bootstrap.min.css') }}">
+  </head>
+  <body>
+
+{% for pdu in pdus %}
+    <table class="table table-striped table-hover">
+      <tr>
+        <th>oid</th>
+        <th>oid_index</th>
+        <th>snmp_type</th>
+        <th>value</th>
+      </tr>
+    {% for snmp_variable in pdu.snmp_variables %}
+      <tr>
+        <td>{{ snmp_variable.oid }}</td>
+        <td>{{ snmp_variable.oid_index }}</td>
+        <td>{{ snmp_variable.snmp_type }}</td>
+        <td>{{ snmp_variable.value }}</td>
+      </tr>
+    {% endfor %}
+    </table> 
+{% endfor %}
+
+    <script src="{{ url_for('static', filename='js/lib/bootstrap.bundle.min.js') }}"></script>
+  </body>
+</html>
