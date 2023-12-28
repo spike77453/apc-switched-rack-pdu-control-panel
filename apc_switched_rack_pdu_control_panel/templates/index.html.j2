@@ -32,9 +32,9 @@
         border-radius: 50%;
         border: 1px solid;
       }
-      .reboot { 
-        margin-top: -2px; 
-        margin-left: -16px; 
+      .reboot {
+        margin-top: -2px;
+        margin-left: -16px;
       }
       .pencil {
         width: 200px;
@@ -171,8 +171,6 @@
 
                 </div>
               </div>
-          
-          
 
               <!-- Modal Rename PDU -->
               <div class="modal fade" id="pduName{{ pdu.hostname | replace('.', '') }}" tabindex="-1" aria-labelledby="pduName{{ pdu.hostname | replace('.', '') }}Label" aria-hidden="true">
@@ -204,56 +202,54 @@
               <div class="row g-4 py-5 row-cols-1 row-cols-md-2 row-cols-lg-4 pb-3">
 
   {%- for outlet in pdu.outlets %}
-      {% if not loop.first %}    {% endif %}
-                  <div class="col d-flex align-items-start">        
+                <div class="col d-flex align-items-start">
 
-                    <svg class="bi flex-shrink-0" width="1.75em" height="1.75em" fill="currentColor" data-bs-toggle="tooltip" data-bs-placement="top" title="https://{{ server_name }}?IP={{ pdu.hostname }}&OUTLET={{ outlet.index }}" data-clipboard-text="https://{{ server_name }}?IP={{ pdu.hostname }}&OUTLET={{ outlet.index }}">
-                        <use xlink:href="#outlet"/>
-                    </svg>
+                  <svg class="bi flex-shrink-0" width="1.75em" height="1.75em" fill="currentColor" data-bs-toggle="tooltip" data-bs-placement="top" title="https://{{ server_name }}?IP={{ pdu.hostname }}&OUTLET={{ outlet.index }}" data-clipboard-text="https://{{ server_name }}?IP={{ pdu.hostname }}&OUTLET={{ outlet.index }}">
+                    <use xlink:href="#outlet"/>
+                  </svg>
 
                   <div>
                     <h4 class="fw-bold mb-0 ms-2 outlet-labels">{{ outlet.name }}</h4>
-                    
 
-                  <div class="switch-container">
-                    <div class="row">
-                      <div class="col">
-                        <form action="." method="post">
-                          <div class="form-check form-switch form-switch-xl">
-                            <input class="form-check-input" type="checkbox" id="STATE" onChange="this.form.submit()"  {{ " checked" if outlet.state == "ON" }}>
-                            <input type="hidden" name="OUTLET" value="{{ outlet.index }}">
-                            <input type="hidden" name="IP" value="{{ pdu.hostname }}">
-                            <input type="hidden" name="REQUESTED_STATE" value="{{ 'OFF' if outlet.state == 'ON' else 'ON' }}">
-                          </div>
-                        </form>
-                      </div>
-                      <div class="col">
-                        <form action="." method="post" {{ "hidden" if outlet.state == "OFF" }}>
-                          <div class="form-check pt-1 ps-1">
-                            <button type="submit" class="btn btn-outline-secondary round-btn">
-                              <svg xmlns="http://www.w3.org/2000/svg" width="2.75em" height="1.75em" fill="currentColor" class="reboot">
-                                <use xlink:href="#arrow-clockwise"/>
-                              </svg>
-                            </button>
-                            <input type="hidden" name="OUTLET" value="{{ outlet.index }}">
-                            <input type="hidden" name="IP" value="{{ pdu.hostname }}">
-                            <input type="hidden" name="REQUESTED_STATE" value="REBOOT">
-                          </div>
-                        </form>
+                    <div class="switch-container">
+                      <div class="row">
+                        <div class="col">
+                          <form action="." method="post">
+                            <div class="form-check form-switch form-switch-xl">
+                              <input class="form-check-input" type="checkbox" id="STATE" onChange="this.form.submit()"  {{ " checked" if outlet.state == "ON" }}>
+                              <input type="hidden" name="OUTLET" value="{{ outlet.index }}">
+                              <input type="hidden" name="IP" value="{{ pdu.hostname }}">
+                              <input type="hidden" name="REQUESTED_STATE" value="{{ 'OFF' if outlet.state == 'ON' else 'ON' }}">
+                            </div>
+                          </form>
+                        </div>
+                        <div class="col">
+                          <form action="." method="post" {{ "hidden" if outlet.state == "OFF" }}>
+                            <div class="form-check pt-1 ps-1">
+                              <button type="submit" class="btn btn-outline-secondary round-btn">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="2.75em" height="1.75em" fill="currentColor" class="reboot">
+                                  <use xlink:href="#arrow-clockwise"/>
+                                </svg>
+                              </button>
+                              <input type="hidden" name="OUTLET" value="{{ outlet.index }}">
+                              <input type="hidden" name="IP" value="{{ pdu.hostname }}">
+                              <input type="hidden" name="REQUESTED_STATE" value="REBOOT">
+                            </div>
+                          </form>
+                        </div>
                       </div>
                     </div>
-                  </div>
 
                   </div>
                 </div>
   {%- endfor %}
-          
+
               </div>
             </div>
 
             <br>
 {%- endfor %}
-      
+
   </main>
   <footer class="pt-2 my-1 text-muted border-top">
     &copy; 2021-{{ year }}     <a href="https://github.com/spike77453/apc-switched-rack-pdu-control-panel" title="GitHub" target="_blank" rel="noopener noreferrer nofollow" class="text-muted text-decoration-none">
