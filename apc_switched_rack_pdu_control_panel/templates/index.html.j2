@@ -183,7 +183,7 @@
                       <div class="modal-body">
                         <div class="mb-3">
                           <label for="pduInputName" class="form-label">PDU Name</label>
-                          <input type="text" class="form-control" id="pduInputName" name="pduInputName" placeholder="{{ pdu.name }}" aria-describedby="pduName" onkeypress="return /^[\x00-\x7F]*$/i.test(event.key)">
+                          <input type="text" class="form-control" id="pduInputName" name="pduInputName" placeholder="{{ pdu.name }}" onkeypress="return /^[\x00-\x7F]*$/i.test(event.key)">
                           <input type="hidden" name="IP" value="{{ pdu.hostname }}">
                           <div id="pduName{{ pdu.hostname | replace('.', '') }}" class="form-text">Only ASCII character set allowed</div>
                         </div>
