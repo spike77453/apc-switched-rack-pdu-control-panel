@@ -159,7 +159,7 @@ def outlet():
 def main_get():
     if 'IP' in request.args and 'OUTLET' in request.args and request.args['OUTLET'].isnumeric():
         app.logger.warning("This should toggle outlet %s on %s. Not implemented yet.", request.args['OUTLET'], request.args['IP'])
-        return '', 302
+        return abort(501, description='Not implemented yet')
 
     pdus = []
     for apc_pdu in app.config['APC_PDUS']:
