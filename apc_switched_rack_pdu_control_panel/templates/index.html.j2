@@ -216,7 +216,7 @@
                         <div class="col">
                           <form action="." method="post">
                             <div class="form-check form-switch form-switch-xl">
-                              <input class="form-check-input" type="checkbox" id="STATE" onChange="this.form.submit()"  {{ " checked" if outlet.state == "ON" }}>
+                              <input class="form-check-input" type="checkbox" onChange="this.form.submit()"  {{ " checked" if outlet.state == "ON" }}>
                               <input type="hidden" name="OUTLET" value="{{ outlet.index }}">
                               <input type="hidden" name="IP" value="{{ pdu.hostname }}">
                               <input type="hidden" name="REQUESTED_STATE" value="{{ 'OFF' if outlet.state == 'ON' else 'ON' }}">
