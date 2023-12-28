@@ -225,9 +225,7 @@
                         </form>
                       </div>
                       <div class="col">
-      {%- if outlet.state == "ON" %}
-                        
-                        <form action="." method="post">
+                        <form action="." method="post" {{ "hidden" if outlet.state == "OFF" }}>
                           <div class="form-check pt-1 ps-1">
                             <button type="submit" class="btn btn-outline-secondary round-btn" name="STATE" value="REBOOT">
                               <svg xmlns="http://www.w3.org/2000/svg" width="2.75em" height="1.75em" fill="currentColor" class="reboot">
@@ -239,8 +237,6 @@
                             <input type="hidden" name="REQUESTED_STATE" value="REBOOT">
                           </div>
                         </form>
-      {%- endif %}
-                        
                       </div>
                     </div>
                   </div>
