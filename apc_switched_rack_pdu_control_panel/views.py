@@ -116,12 +116,12 @@ def main_get():
 
         for (index, name, state) in zip(outlet_indices, outlet_names, outlet_states):
             outlets.append({
-                "Index": index.value,
-                "Name": name.value,
-                "Status": {"1": "ON", "2": "OFF"}.get(state.value, "UNKNOWN"),
+                "index": index.value,
+                "name": name.value,
+                "state": {"1": "ON", "2": "OFF"}.get(state.value, "UNKNOWN"),
             })
 
-        app.logger.debug('Outlet status on APC PDU "%s" (%s):\n%s', pdu_name, apc_pdu['hostname'], pformat(outlets, sort_dicts=False))
+        app.logger.debug('Outlet state on APC PDU "%s" (%s):\n%s', pdu_name, apc_pdu['hostname'], pformat(outlets, sort_dicts=False))
 
         pdus.append({
             'name': pdu_name,

@@ -204,12 +204,12 @@
       {% if not loop.first %}    {% endif %}
                   <div class="col d-flex align-items-start">        
 
-                    <svg class="bi flex-shrink-0" width="1.75em" height="1.75em" fill="currentColor" data-bs-toggle="tooltip" data-bs-placement="top" title="https://{{ server_name }}?IP={{ pdu.hostname }}&OUTLET={{ outlet.Index }}" data-clipboard-text="https://{{ server_name }}?IP={{ pdu.hostname }}&OUTLET={{ outlet.Index }}">
+                    <svg class="bi flex-shrink-0" width="1.75em" height="1.75em" fill="currentColor" data-bs-toggle="tooltip" data-bs-placement="top" title="https://{{ server_name }}?IP={{ pdu.hostname }}&OUTLET={{ outlet.index }}" data-clipboard-text="https://{{ server_name }}?IP={{ pdu.hostname }}&OUTLET={{ outlet.index }}">
                         <use xlink:href="#outlet"/>
                     </svg>
 
                   <div>
-                    <h4 class="fw-bold mb-0 ms-2 outlet-labels">{{ outlet.Name }}</h4>
+                    <h4 class="fw-bold mb-0 ms-2 outlet-labels">{{ outlet.name }}</h4>
                     
 
                   <div class="switch-container">
@@ -217,15 +217,15 @@
                       <div class="col">
                         <form action="." method="post">
                           <div class="form-check form-switch form-switch-xl">
-                            <input class="form-check-input" type="checkbox" id="STATE" name="STATE" value="TOGGLE" onChange="this.form.submit()"  {{ " checked" if outlet.Status == "ON" }}>
-                            <input type="hidden" name="OUTLET" value="{{ outlet.Index }}">
+                            <input class="form-check-input" type="checkbox" id="STATE" name="STATE" value="TOGGLE" onChange="this.form.submit()"  {{ " checked" if outlet.state == "ON" }}>
+                            <input type="hidden" name="OUTLET" value="{{ outlet.index }}">
                             <input type="hidden" name="IP" value="{{ pdu.hostname }}">
-                            <input type="hidden" name="REQUESTED_STATE" value="{{ 'OFF' if outlet.Status == 'ON' else 'ON' }}">
+                            <input type="hidden" name="REQUESTED_STATE" value="{{ 'OFF' if outlet.state == 'ON' else 'ON' }}">
                           </div>
                         </form>
                       </div>
                       <div class="col">
-      {%- if outlet.Status == "ON" %}
+      {%- if outlet.state == "ON" %}
                         
                         <form action="." method="post">
                           <div class="form-check pt-1 ps-1">
@@ -234,7 +234,7 @@
                                 <use xlink:href="#arrow-clockwise"/>
                               </svg>
                             </button>
-                            <input type="hidden" name="OUTLET" value="{{ outlet.Index }}">
+                            <input type="hidden" name="OUTLET" value="{{ outlet.index }}">
                             <input type="hidden" name="IP" value="{{ pdu.hostname }}">
                             <input type="hidden" name="REQUESTED_STATE" value="REBOOT">
                           </div>
