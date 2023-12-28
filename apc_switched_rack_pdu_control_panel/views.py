@@ -2,7 +2,7 @@ import datetime
 from pprint import pformat
 
 from easysnmp import Session
-from flask import redirect, render_template, request, url_for
+from flask import abort, render_template, request
 
 from apc_switched_rack_pdu_control_panel import app
 
@@ -13,6 +13,11 @@ rPDUOutletStatusIndex          = '1.3.6.1.4.1.318.1.1.12.3.5.1.1.1'
 rPDUOutletStatusOutletName     = '1.3.6.1.4.1.318.1.1.12.3.5.1.1.2'
 rPDUOutletStatusOutletState    = '1.3.6.1.4.1.318.1.1.12.3.5.1.1.4'
 
+outlet_state_dict = {
+    "1": "ON",
+    "2": "OFF",
+    "3": "REBOOT"
+}
 
 def find_apc_pdu_by_hostname(hostname):
     for apc_pdu in app.config['APC_PDUS']:
@@ -40,60 +45,114 @@ def system():
     return render_template('system_table.html.j2', pdus=pdus)
 
 
-@app.post('/')
-def main_post():
-#---- BEGIN: Handle outlets -----------
+
+@app.route('/pdu', methods=['POST'])
+def pdu():
+    app.logger.debug(f'Form: {pformat(request.form)}')
+    if not 'pduInputName' in request.form or not request.form['pduInputName'].isascii() or not request.form['pduInputName']:
+        return abort(400, description='Invalid PDU name')
     if not 'IP' in request.form:
-        return 'PDU not found', 400
-    apc_pdu = find_apc_pdu_by_hostname(request.form['IP'])
+        return abort(400, description='No PDU specified')
+    pdu_hostname = request.form['IP']
+    apc_pdu = find_apc_pdu_by_hostname(pdu_hostname)
     if not apc_pdu:
-        return 'PDU not found', 400
+        return abort(400, description='PDU not found')
+    session = Session(version=3, **apc_pdu)
+    session.set(rPDUIdentName, request.form['pduInputName'], snmp_type='OCTETSTR')
+    pdu_name = session.get('sysName.0').value
+    json_response = {
+        'pdu_hostname': pdu_hostname,
+        'pdu_name': pdu_name,
+    }
+    app.logger.debug(f'JSON response: {pformat(json_response)}')
+    return json_response
+
+
+@app.route('/outlets', methods=['POST'])
+def outlets():
+    app.logger.debug(f'Form: {pformat(request.form)}')
+    if not 'REQUESTED_STATE' in request.form or request.form['REQUESTED_STATE'] not in ['ON', 'OFF', 'REBOOT']:
+        return abort(400, description='Invalid state requested')
+    if not 'IP' in request.form:
+        return abort(400, description='No PDU specified')
+    pdu_hostname = request.form['IP']
+    apc_pdu = find_apc_pdu_by_hostname(pdu_hostname)
+    if not apc_pdu:
+        return abort(400, description='PDU not found')
     session = Session(version=3, **apc_pdu)
 
-    # Command to all outlets has been sent
-    if 'OUTLET' in request.form and not request.form['OUTLET'].isnumeric():
-        match request.form['REQUESTED_STATE']:
-            case 'ON':
-                session.set(rPDUOutletDevCommand, '2', snmp_type='INTEGER')
-            case 'OFF':
-                session.set(rPDUOutletDevCommand, '3', snmp_type='INTEGER')
-            case 'REBOOT':
-                session.set(rPDUOutletDevCommand, '4', snmp_type='INTEGER')
+    match request.form['REQUESTED_STATE']:
+        case 'ON':
+            session.set(rPDUOutletDevCommand, '2', snmp_type='INTEGER')
+        case 'OFF':
+            session.set(rPDUOutletDevCommand, '3', snmp_type='INTEGER')
+        case 'REBOOT':
+            session.set(rPDUOutletDevCommand, '4', snmp_type='INTEGER')
 
-    # Command to a single outlets has been sent
-    elif 'OUTLET' in request.form and request.form['OUTLET'].isnumeric():
-        # Get state of the affected APC PDU power outlet
-        query_outlet_state = session.get(f"{rPDUOutletStatusOutletState}.{request.form['OUTLET']}")
+    outlets = []
+    outlet_indices = session.walk(rPDUOutletStatusIndex)
+    outlet_names = session.walk(rPDUOutletStatusOutletName)
+    outlet_states = session.walk(rPDUOutletStatusOutletState)
 
-        # ON (1), OFF (2), REBOOT (3)
-        if 'REQUESTED_STATE' in request.form and query_outlet_state.snmp_type == 'INTEGER':
-            app.logger.debug(f"Current state: {query_outlet_state.value}, Requested state: {request.form['REQUESTED_STATE']}")
+    json_response = {
+        'pdu_hostname': pdu_hostname,
+        'outlets': {}
+    }
+    for (index, name, state) in zip(outlet_indices, outlet_names, outlet_states):
+        json_response['outlets'][index.value] = {
+            "name": name.value,
+            "state": outlet_state_dict.get(state.value, "UNKNOWN"),
+        }
+    app.logger.debug(f'JSON response:\n{pformat(json_response)}')
+    return json_response
 
-            # If current state is ON (1) and requested state is OFF, change to OFF (2)
-            if query_outlet_state.value == '1' and request.form['REQUESTED_STATE'] == 'OFF':
-                session.set(f"{rPDUOutletControlOutletCommand}.{request.form['OUTLET']}" , '2', snmp_type='INTEGER')
 
-            # If current state is OFF (2), and requested state is ON, change to ON (1)
-            elif query_outlet_state.value == '2' and request.form['REQUESTED_STATE'] == 'ON':
-                session.set(f"{rPDUOutletControlOutletCommand}.{request.form['OUTLET']}" , '1', snmp_type='INTEGER')
 
-            # REBOOT has been requested
-            elif request.form['REQUESTED_STATE'] ==  'REBOOT':
-                session.set(f"{rPDUOutletControlOutletCommand}.{request.form['OUTLET']}" , '3', snmp_type='INTEGER')
-#---- END: Handle outlets ------
+@app.route('/outlet', methods=['POST'])
+def outlet():
+    app.logger.debug(f'Form: {pformat(request.form)}')
+    if not 'OUTLET' in request.form or not request.form['OUTLET'].isnumeric():
+        return abort(400, description='Invalid outlet index')
+    if not 'REQUESTED_STATE' in request.form or request.form['REQUESTED_STATE'] not in ['ON', 'OFF', 'REBOOT']:
+        return abort(400, description='Invalid state requested')
+    if not 'IP' in request.form:
+        return abort(400, description='No PDU specified')
+    pdu_hostname = request.form['IP']
+    apc_pdu = find_apc_pdu_by_hostname(pdu_hostname)
+    if not apc_pdu:
+        return abort(400, description='PDU not found')
+    session = Session(version=3, **apc_pdu)
+    outlet_index = request.form['OUTLET']
+    requested_state = request.form['REQUESTED_STATE']
 
-#---- BEGIN: PDU rename ---------------
-    elif 'pduInputName' in request.form:
-        app.logger.debug('Renaming PDU')
-        if request.form['pduInputName'].isascii():
-            session.set(rPDUIdentName, request.form['pduInputName'], snmp_type='OCTETSTR')
-        else:
-            app.logger.error('New name contains non-ASCII characters')
-#---- END: PDU rename -----------------
+    # Get state of the affected APC PDU power outlet
+    query_outlet_state = session.get(f"{rPDUOutletStatusOutletState}.{outlet_index}")
+    if query_outlet_state.snmp_type != 'INTEGER':
+        return abort(500, description='Invalid SNMP response')
+    # ON (1), OFF (2), REBOOT (3)
+    current_state = outlet_state_dict.get(query_outlet_state.value, "UNKNOWN")
+    app.logger.debug(f"Current state: {current_state}, Requested state: {requested_state}")
 
-    # PRG to stop the form resubmission on page refresh, see https://en.wikipedia.org/wiki/Post/Redirect/Get
-    return redirect(url_for('main_get'))
+    # If current state is ON (1) and requested state is OFF, change to OFF (2)
+    if current_state == 'ON' and requested_state == 'OFF':
+        session.set(f"{rPDUOutletControlOutletCommand}.{outlet_index}" , '2', snmp_type='INTEGER')
 
+    # If current state is OFF (2), and requested state is ON, change to ON (1)
+    elif current_state == 'OFF' and requested_state == 'ON':
+        session.set(f"{rPDUOutletControlOutletCommand}.{outlet_index}" , '1', snmp_type='INTEGER')
+
+    # REBOOT has been requested
+    elif requested_state ==  'REBOOT':
+        session.set(f"{rPDUOutletControlOutletCommand}.{outlet_index}" , '3', snmp_type='INTEGER')
+
+    query_outlet_state = session.get(f"{rPDUOutletStatusOutletState}.{outlet_index}")
+    json_response = {
+        'state': outlet_state_dict.get(query_outlet_state.value, "UNKNOWN"),
+        'pdu_hostname': pdu_hostname,
+        'index': outlet_index,
+    }
+    app.logger.debug(f'JSON response: {pformat(json_response)}')
+    return json_response
 
 
 @app.get('/')
