@@ -192,6 +192,5 @@ def main_get():
         'index.html.j2',
         pdus=pdus,
         year=datetime.date.today().year,
-        server_name='localhost',
     )
     return rendered_template
