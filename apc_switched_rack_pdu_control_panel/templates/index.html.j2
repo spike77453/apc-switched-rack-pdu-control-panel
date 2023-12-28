@@ -136,31 +136,34 @@
                     <div class="btn-toolbar pb-2 ps-5" role="toolbar" aria-label="Toolbar with button groups">
                       <div class="btn-group me-2" role="group" aria-label="First group">
                         <form action="." method="post">
-                          <button type="submit" class="btn btn-outline-danger" data-bs-toggle="tooltip" data-bs-placement="top" title="Turn ALL outlets ON" name="STATE" value="ON">
+                          <button type="submit" class="btn btn-outline-danger" data-bs-toggle="tooltip" data-bs-placement="top" title="Turn ALL outlets ON">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-toggle-on" viewBox="0 0 16 16">
                               <use xlink:href="#toggle-on"/>
                             </svg>
                           </button>
                           <input type="hidden" name="OUTLET" value="ALL">
                           <input type="hidden" name="IP" value="{{ pdu.hostname }}">
+                          <input type="hidden" name="REQUESTED_STATE" value="ON">
                         </form>
                         <form action="." method="post">
-                          <button type="submit" class="btn btn-outline-danger" data-bs-toggle="tooltip" data-bs-placement="top" title="Turn ALL outlets OFF" name="STATE" value="OFF">
+                          <button type="submit" class="btn btn-outline-danger" data-bs-toggle="tooltip" data-bs-placement="top" title="Turn ALL outlets OFF">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-toggle-off" viewBox="0 0 16 16">
                               <use xlink:href="#toggle-off"/>
                             </svg>
                           </button>
                           <input type="hidden" name="OUTLET" value="ALL">
                           <input type="hidden" name="IP" value="{{ pdu.hostname }}">
+                          <input type="hidden" name="REQUESTED_STATE" value="OFF">
                         </form>
                         <form action="." method="post">
-                          <button type="submit" class="btn btn-outline-danger" data-bs-toggle="tooltip" data-bs-placement="top" title="REBOOT ALL outlets" name="STATE" value="REBOOT">
+                          <button type="submit" class="btn btn-outline-danger" data-bs-toggle="tooltip" data-bs-placement="top" title="REBOOT ALL outlets">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-bootstrap-reboot" viewBox="0 0 16 16">
                               <use xlink:href="#bootstrap-reboot"/>
                             </svg>
                           </button>
                           <input type="hidden" name="OUTLET" value="ALL">
                           <input type="hidden" name="IP" value="{{ pdu.hostname }}">
+                          <input type="hidden" name="REQUESTED_STATE" value="REBOOT">
                         </form>
                       </div>
                     </div>
@@ -217,7 +220,7 @@
                       <div class="col">
                         <form action="." method="post">
                           <div class="form-check form-switch form-switch-xl">
-                            <input class="form-check-input" type="checkbox" id="STATE" name="STATE" value="TOGGLE" onChange="this.form.submit()"  {{ " checked" if outlet.state == "ON" }}>
+                            <input class="form-check-input" type="checkbox" id="STATE" onChange="this.form.submit()"  {{ " checked" if outlet.state == "ON" }}>
                             <input type="hidden" name="OUTLET" value="{{ outlet.index }}">
                             <input type="hidden" name="IP" value="{{ pdu.hostname }}">
                             <input type="hidden" name="REQUESTED_STATE" value="{{ 'OFF' if outlet.state == 'ON' else 'ON' }}">
@@ -227,7 +230,7 @@
                       <div class="col">
                         <form action="." method="post" {{ "hidden" if outlet.state == "OFF" }}>
                           <div class="form-check pt-1 ps-1">
-                            <button type="submit" class="btn btn-outline-secondary round-btn" name="STATE" value="REBOOT">
+                            <button type="submit" class="btn btn-outline-secondary round-btn">
                               <svg xmlns="http://www.w3.org/2000/svg" width="2.75em" height="1.75em" fill="currentColor" class="reboot">
                                 <use xlink:href="#arrow-clockwise"/>
                               </svg>

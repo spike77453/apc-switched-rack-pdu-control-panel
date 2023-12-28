@@ -52,7 +52,7 @@ def main_post():
 
     # Command to all outlets has been sent
     if 'OUTLET' in request.form and not request.form['OUTLET'].isnumeric():
-        match request.form['STATE']:
+        match request.form['REQUESTED_STATE']:
             case 'ON':
                 session.set(rPDUOutletDevCommand, '2', snmp_type='INTEGER')
             case 'OFF':
