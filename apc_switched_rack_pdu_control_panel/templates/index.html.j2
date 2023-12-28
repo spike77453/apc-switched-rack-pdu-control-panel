@@ -125,7 +125,7 @@
                     <a href="http://{{ pdu.hostname }}" title="{{ pdu.name }}" target="_blank" rel="noopener noreferrer nofollow" class="text-dark-emphasis text-decoration-none">
                       <h2>{{ pdu.name }}</h2>
                     </a>
-                    <span class="mx-2" data-bs-toggle="modal" data-bs-target="#pduName{{ pdu.hostname | replace('.', '') }}" >
+                    <span class="mx-2" data-bs-toggle="modal" data-bs-target="#pduName{{ pdu.hostname | hash('md5') }}" >
                       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-fill" viewBox="0 0 16 16" data-bs-toggle="tooltip" data-bs-placement="top" title="Rename PDU">
                       <use xlink:href="#pencil-fill"/>
                       </svg>
@@ -173,11 +173,11 @@
               </div>
 
               <!-- Modal Rename PDU -->
-              <div class="modal fade" id="pduName{{ pdu.hostname | replace('.', '') }}" tabindex="-1" aria-labelledby="pduName{{ pdu.hostname | replace('.', '') }}Label" aria-hidden="true">
+              <div class="modal fade" id="pduName{{ pdu.hostname | hash('md5') }}" tabindex="-1" aria-labelledby="pduName{{ pdu.hostname | hash('md5') }}Label" aria-hidden="true">
                 <div class="modal-dialog modal-dialog-centered">
                   <div class="modal-content">
                     <div class="modal-header">
-                      <h5 class="modal-title" id="pduName{{ pdu.hostname | replace('.', '') }}Label">Rename PDU</h5>
+                      <h5 class="modal-title" id="pduName{{ pdu.hostname | hash('md5') }}Label">Rename PDU</h5>
                       <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <form action="." method="post">
