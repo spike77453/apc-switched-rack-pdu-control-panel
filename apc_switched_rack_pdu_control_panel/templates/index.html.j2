@@ -119,55 +119,53 @@
 {% for pdu in pdus %}
             <div class="container px-4 pt-3 border text-light-emphasis bg-light-subtle border rounded" id="icon-grid">
               <div class="container border-bottom border-bottom-dark">
-                <div class="get-quote">
-                  <div class="row">
+                <div class="row">
 
-                    <div class="col-6 d-flex">
-                      <a href="http://{{ pdu.hostname }}" title="{{ pdu.name }}" target="_blank" rel="noopener noreferrer nofollow" class="text-dark-emphasis text-decoration-none">
-                        <h2>{{ pdu.name }}</h2>
-                      </a>
-                      <span class="mx-2" data-bs-toggle="modal" data-bs-target="#pduName{{ pdu.hostname | replace('.', '') }}" >
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-fill" viewBox="0 0 16 16" data-bs-toggle="tooltip" data-bs-placement="top" title="Rename PDU">
-                        <use xlink:href="#pencil-fill"/>
-                        </svg>
-                      </span>
-                    </div>
+                  <div class="col-6 d-flex">
+                    <a href="http://{{ pdu.hostname }}" title="{{ pdu.name }}" target="_blank" rel="noopener noreferrer nofollow" class="text-dark-emphasis text-decoration-none">
+                      <h2>{{ pdu.name }}</h2>
+                    </a>
+                    <span class="mx-2" data-bs-toggle="modal" data-bs-target="#pduName{{ pdu.hostname | replace('.', '') }}" >
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-fill" viewBox="0 0 16 16" data-bs-toggle="tooltip" data-bs-placement="top" title="Rename PDU">
+                      <use xlink:href="#pencil-fill"/>
+                      </svg>
+                    </span>
+                  </div>
 
-                    <div class="col-6 d-flex flex-row-reverse">
-                      <div class="btn-toolbar pb-2 ps-5" role="toolbar" aria-label="Toolbar with button groups">
-                        <div class="btn-group me-2" role="group" aria-label="First group">
-                          <form action="." method="post">
-                            <button type="submit" class="btn btn-outline-danger" data-bs-toggle="tooltip" data-bs-placement="top" title="Turn ALL outlets ON" name="STATE" value="ON">
-                              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-toggle-on" viewBox="0 0 16 16">
-                                <use xlink:href="#toggle-on"/>
-                              </svg>
-                            </button>
-                            <input type="hidden" name="OUTLET" value="ALL">
-                            <input type="hidden" name="IP" value="{{ pdu.hostname }}">
-                          </form>
-                          <form action="." method="post">
-                            <button type="submit" class="btn btn-outline-danger" data-bs-toggle="tooltip" data-bs-placement="top" title="Turn ALL outlets OFF" name="STATE" value="OFF">
-                              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-toggle-off" viewBox="0 0 16 16">
-                                <use xlink:href="#toggle-off"/>
-                              </svg>
-                            </button>
-                            <input type="hidden" name="OUTLET" value="ALL">
-                            <input type="hidden" name="IP" value="{{ pdu.hostname }}">
-                          </form>
-                          <form action="." method="post">
-                            <button type="submit" class="btn btn-outline-danger" data-bs-toggle="tooltip" data-bs-placement="top" title="REBOOT ALL outlets" name="STATE" value="REBOOT">
-                              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-bootstrap-reboot" viewBox="0 0 16 16">
-                                <use xlink:href="#bootstrap-reboot"/>
-                              </svg>
-                            </button>
-                            <input type="hidden" name="OUTLET" value="ALL">
-                            <input type="hidden" name="IP" value="{{ pdu.hostname }}">
-                          </form>
-                        </div>
+                  <div class="col-6 d-flex flex-row-reverse">
+                    <div class="btn-toolbar pb-2 ps-5" role="toolbar" aria-label="Toolbar with button groups">
+                      <div class="btn-group me-2" role="group" aria-label="First group">
+                        <form action="." method="post">
+                          <button type="submit" class="btn btn-outline-danger" data-bs-toggle="tooltip" data-bs-placement="top" title="Turn ALL outlets ON" name="STATE" value="ON">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-toggle-on" viewBox="0 0 16 16">
+                              <use xlink:href="#toggle-on"/>
+                            </svg>
+                          </button>
+                          <input type="hidden" name="OUTLET" value="ALL">
+                          <input type="hidden" name="IP" value="{{ pdu.hostname }}">
+                        </form>
+                        <form action="." method="post">
+                          <button type="submit" class="btn btn-outline-danger" data-bs-toggle="tooltip" data-bs-placement="top" title="Turn ALL outlets OFF" name="STATE" value="OFF">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-toggle-off" viewBox="0 0 16 16">
+                              <use xlink:href="#toggle-off"/>
+                            </svg>
+                          </button>
+                          <input type="hidden" name="OUTLET" value="ALL">
+                          <input type="hidden" name="IP" value="{{ pdu.hostname }}">
+                        </form>
+                        <form action="." method="post">
+                          <button type="submit" class="btn btn-outline-danger" data-bs-toggle="tooltip" data-bs-placement="top" title="REBOOT ALL outlets" name="STATE" value="REBOOT">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-bootstrap-reboot" viewBox="0 0 16 16">
+                              <use xlink:href="#bootstrap-reboot"/>
+                            </svg>
+                          </button>
+                          <input type="hidden" name="OUTLET" value="ALL">
+                          <input type="hidden" name="IP" value="{{ pdu.hostname }}">
+                        </form>
                       </div>
                     </div>
-
                   </div>
+
                 </div>
               </div>
           
