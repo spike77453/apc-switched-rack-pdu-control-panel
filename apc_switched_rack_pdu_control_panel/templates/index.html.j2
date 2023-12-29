@@ -201,7 +201,7 @@
   {%- for outlet in pdu.outlets %}
                 <div class="col d-flex align-items-start">
 
-                  <svg class="bi flex-shrink-0" width="1.75em" height="1.75em" fill="currentColor" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ url_for('main_get', _external=True, IP=pdu.hostname, OUTLET=outlet.index) }}" data-clipboard-text="{{ url_for('main_get', _external=True, IP=pdu.hostname, OUTLET=outlet.index) }}">
+                  <svg class="bi flex-shrink-0" width="1.75em" height="1.75em" fill="currentColor" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ url_for('outlet', _external=True, IP=pdu.hostname, OUTLET=outlet.index, REQUESTED_STATE='TOGGLE') }}" data-clipboard-text="{{ url_for('outlet', _external=True, IP=pdu.hostname, OUTLET=outlet.index, REQUESTED_STATE='TOGGLE') }}">
                     <use xlink:href="#outlet"/>
                   </svg>
 

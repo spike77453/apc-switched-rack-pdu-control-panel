@@ -108,10 +108,17 @@ def outlets():
 
 
 
-@app.route('/outlet', methods=['POST'])
+@app.route('/outlet', methods=['POST', 'GET'])
 def outlet():
-    app.logger.debug(f'Form: {pformat(request.form)}')
-    form = SingleOutletForm(request.form)
+    # Making changes with a GET requests is evil,
+    # keeping it though for functional parity to https://github.com/disisto/apc-switched-rack-pdu-control-panel
+    if request.method == 'GET':
+        app.logger.debug(f'Args: {pformat(request.args)}')
+        form = SingleOutletForm(request.args)
+    else:
+        app.logger.debug(f'Form: {pformat(request.form)}')
+        form = SingleOutletForm(request.form)
+
     if not form.validate():
         return abort(400, description=form.errors)
     apc_pdu = find_apc_pdu_by_hostname(form.IP.data)
@@ -139,6 +146,12 @@ def outlet():
     elif requested_state ==  'REBOOT':
         session.set(f"{rPDUOutletControlOutletCommand}.{outlet_index}" , '3', snmp_type='INTEGER')
 
+    elif requested_state == 'TOGGLE':
+        if current_state == 'ON':
+            session.set(f"{rPDUOutletControlOutletCommand}.{outlet_index}" , '2', snmp_type='INTEGER')
+        elif current_state == 'OFF':
+            session.set(f"{rPDUOutletControlOutletCommand}.{outlet_index}" , '1', snmp_type='INTEGER')
+
     query_outlet_state = session.get(f"{rPDUOutletStatusOutletState}.{outlet_index}")
     json_response = {
         'state': outlet_state_dict.get(query_outlet_state.value, "UNKNOWN"),
@@ -151,9 +164,6 @@ def outlet():
 
 @app.get('/')
 def main_get():
-    if 'IP' in request.args and 'OUTLET' in request.args and request.args['OUTLET'].isnumeric():
-        app.logger.warning("This should toggle outlet %s on %s. Not implemented yet.", request.args['OUTLET'], request.args['IP'])
-        return abort(501, description='Not implemented yet')
 
     pdus = []
     for apc_pdu in app.config['APC_PDUS']:

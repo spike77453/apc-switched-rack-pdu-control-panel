@@ -18,6 +18,11 @@ class SingleOutletForm(OutletForm):
     OUTLET = IntegerField(
         validators=[DataRequired(), NumberRange(min=0)]
     )
+    REQUESTED_STATE = StringField(
+        validators=[DataRequired(), AnyOf(["ON", "OFF", "REBOOT", "TOGGLE"])],
+        filters=[str.upper],
+        default="",
+    )
 
 class ValidPDUName():
     def __init__(self, message=None):
