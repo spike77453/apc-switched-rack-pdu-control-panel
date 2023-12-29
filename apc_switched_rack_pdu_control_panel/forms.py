@@ -5,20 +5,20 @@ from apc_switched_rack_pdu_control_panel import app
 
 
 class OutletForm(Form):
-    IP = StringField(
+    pdu_hostname = StringField(
         validators=[DataRequired(), AnyOf([d['hostname'] for d in app.config['APC_PDUS']])],
     )
-    REQUESTED_STATE = StringField(
+    requested_state = StringField(
         validators=[DataRequired(), AnyOf(["ON", "OFF", "REBOOT"])],
         filters=[str.upper],
         default="",
     )
 
 class SingleOutletForm(OutletForm):
-    OUTLET = IntegerField(
+    outlet_index = IntegerField(
         validators=[DataRequired(), NumberRange(min=0)]
     )
-    REQUESTED_STATE = StringField(
+    requested_state = StringField(
         validators=[DataRequired(), AnyOf(["ON", "OFF", "REBOOT", "TOGGLE"])],
         filters=[str.upper],
         default="",
@@ -35,9 +35,9 @@ class ValidPDUName():
             raise ValidationError(self.message)
 
 class PDURenameForm(Form):
-    pduInputName = StringField(
+    pdu_input_name = StringField(
         validators=[DataRequired(), ValidPDUName()],
     )
-    IP = StringField(
+    pdu_hostname = StringField(
         validators=[DataRequired(), AnyOf([d['hostname'] for d in app.config['APC_PDUS']])],
     )

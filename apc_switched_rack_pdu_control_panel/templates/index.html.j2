@@ -141,8 +141,8 @@
                               <use xlink:href="#toggle-on"/>
                             </svg>
                           </button>
-                          <input type="hidden" name="IP" value="{{ pdu.hostname }}">
-                          <input type="hidden" name="REQUESTED_STATE" value="ON">
+                          <input type="hidden" name="pdu_hostname" value="{{ pdu.hostname }}">
+                          <input type="hidden" name="requested_state" value="ON">
                         </form>
                         <form>
                           <button type="submit" class="all-outlets-btn btn btn-outline-danger" data-bs-trigger="hover" data-bs-toggle="tooltip" data-bs-placement="top" title="Turn ALL outlets OFF">
@@ -150,8 +150,8 @@
                               <use xlink:href="#toggle-off"/>
                             </svg>
                           </button>
-                          <input type="hidden" name="IP" value="{{ pdu.hostname }}">
-                          <input type="hidden" name="REQUESTED_STATE" value="OFF">
+                          <input type="hidden" name="pdu_hostname" value="{{ pdu.hostname }}">
+                          <input type="hidden" name="requested_state" value="OFF">
                         </form>
                         <form>
                           <button type="submit" class="all-outlets-btn btn btn-outline-danger" data-bs-trigger="hover" data-bs-toggle="tooltip" data-bs-placement="top" title="REBOOT ALL outlets">
@@ -159,8 +159,8 @@
                               <use xlink:href="#bootstrap-reboot"/>
                             </svg>
                           </button>
-                          <input type="hidden" name="IP" value="{{ pdu.hostname }}">
-                          <input type="hidden" name="REQUESTED_STATE" value="REBOOT">
+                          <input type="hidden" name="pdu_hostname" value="{{ pdu.hostname }}">
+                          <input type="hidden" name="requested_state" value="REBOOT">
                         </form>
                       </div>
                     </div>
@@ -180,9 +180,9 @@
                     <form>
                       <div class="modal-body">
                         <div class="mb-3">
-                          <label for="pduInputName" class="form-label">PDU Name</label>
-                          <input type="text" class="form-control" id="pduInputName" name="pduInputName" onkeypress="return /^[\x00-\x7F]*$/i.test(event.key)">
-                          <input type="hidden" name="IP" value="{{ pdu.hostname }}">
+                          <label for="pdu_input_name" class="form-label">PDU Name</label>
+                          <input type="text" class="form-control" id="pdu_input_name" name="pdu_input_name" onkeypress="return /^[\x00-\x7F]*$/i.test(event.key)">
+                          <input type="hidden" name="pdu_hostname" value="{{ pdu.hostname }}">
                           <div class="form-text">Only ASCII character set allowed</div>
                         </div>
                       </div>
@@ -201,7 +201,7 @@
   {%- for outlet in pdu.outlets %}
                 <div class="col d-flex align-items-start">
 
-                  <svg class="bi flex-shrink-0" width="1.75em" height="1.75em" fill="currentColor" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ url_for('outlet', _external=True, IP=pdu.hostname, OUTLET=outlet.index, REQUESTED_STATE='TOGGLE') }}" data-clipboard-text="{{ url_for('outlet', _external=True, IP=pdu.hostname, OUTLET=outlet.index, REQUESTED_STATE='TOGGLE') }}">
+                  <svg class="bi flex-shrink-0" width="1.75em" height="1.75em" fill="currentColor" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ url_for('outlet', _external=True, pdu_hostname=pdu.hostname, outlet_index=outlet.index, requested_state='TOGGLE') }}" data-clipboard-text="{{ url_for('outlet', _external=True, pdu_hostname=pdu.hostname, outlet_index=outlet.index, requested_state='TOGGLE') }}">
                     <use xlink:href="#outlet"/>
                   </svg>
 
@@ -214,9 +214,9 @@
                           <form class="form-toggle">
                             <div class="form-check form-switch form-switch-xl">
                               <input class="outlet-checkbox form-check-input" type="checkbox" autocomplete="off" {{ "checked" if outlet.state == "ON" }}>
-                              <input type="hidden" name="OUTLET" value="{{ outlet.index }}">
-                              <input type="hidden" name="IP" value="{{ pdu.hostname }}">
-                              <input type="hidden" name="REQUESTED_STATE" value="{{ 'OFF' if outlet.state == 'ON' else 'ON' }}">
+                              <input type="hidden" name="outlet_index" value="{{ outlet.index }}">
+                              <input type="hidden" name="pdu_hostname" value="{{ pdu.hostname }}">
+                              <input type="hidden" name="requested_state" value="{{ 'OFF' if outlet.state == 'ON' else 'ON' }}">
                             </div>
                           </form>
                         </div>
@@ -228,9 +228,9 @@
                                   <use xlink:href="#arrow-clockwise"/>
                                 </svg>
                               </button>
-                              <input type="hidden" name="OUTLET" value="{{ outlet.index }}">
-                              <input type="hidden" name="IP" value="{{ pdu.hostname }}">
-                              <input type="hidden" name="REQUESTED_STATE" value="REBOOT">
+                              <input type="hidden" name="outlet_index" value="{{ outlet.index }}">
+                              <input type="hidden" name="pdu_hostname" value="{{ pdu.hostname }}">
+                              <input type="hidden" name="requested_state" value="REBOOT">
                             </div>
                           </form>
                         </div>
@@ -307,7 +307,7 @@
 
     function updateSwitchContainerItems(switchContainer, state) {
       switchContainer.querySelector("input.outlet-checkbox").checked = state == 'ON' ? true : false;
-      switchContainer.querySelector("form.form-toggle > div > input[name='REQUESTED_STATE']").value = state == 'ON' ? 'OFF' : 'ON';
+      switchContainer.querySelector("form.form-toggle > div > input[name='requested_state']").value = state == 'ON' ? 'OFF' : 'ON';
       switchContainer.querySelector("form.form-reboot").hidden = state == 'ON' ? false : true;
     }
 
@@ -332,7 +332,7 @@
       item.addEventListener('click', fetch_post);
       item.addEventListener('click', function() {
         {# Manually clear input text fild since we prevented even default#}
-        this.form.querySelector("input#pduInputName").value = '';
+        this.form.querySelector("input#pdu_input_name").value = '';
       });
     });
   </script>

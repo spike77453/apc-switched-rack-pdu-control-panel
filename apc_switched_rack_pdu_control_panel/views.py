@@ -70,12 +70,12 @@ def pdu():
     form = PDURenameForm(request.form)
     if not form.validate():
         return abort(400, description=form.errors)
-    apc_pdu = find_apc_pdu_by_hostname(form.IP.data)
+    apc_pdu = find_apc_pdu_by_hostname(form.pdu_hostname.data)
     session = Session(version=3, **apc_pdu)
-    session.set(rPDUIdentName, request.form['pduInputName'], snmp_type='OCTETSTR')
+    session.set(rPDUIdentName, form.pdu_input_name.data, snmp_type='OCTETSTR')
     pdu_name = session.get('sysName.0').value
     json_response = {
-        'pdu_hostname': form.IP.data,
+        'pdu_hostname': form.pdu_hostname.data,
         'pdu_name': pdu_name,
     }
     app.logger.debug(f'JSON response: {pformat(json_response)}')
@@ -88,10 +88,10 @@ def outlets():
     form = OutletForm(request.form)
     if not form.validate():
         return abort(400, description=form.errors)
-    apc_pdu = find_apc_pdu_by_hostname(form.IP.data)
+    apc_pdu = find_apc_pdu_by_hostname(form.pdu_hostname.data)
     session = Session(version=3, **apc_pdu)
 
-    match form.REQUESTED_STATE.data:
+    match form.requested_state.data:
         case 'ON':
             session.set(rPDUOutletDevCommand, '2', snmp_type='INTEGER')
         case 'OFF':
@@ -100,7 +100,7 @@ def outlets():
             session.set(rPDUOutletDevCommand, '4', snmp_type='INTEGER')
 
     json_response = {
-        'pdu_hostname': form.IP.data,
+        'pdu_hostname': form.pdu_hostname.data,
         'outlets': walk_outlets(session),
     }
     app.logger.debug(f'JSON response:\n{pformat(json_response)}')
@@ -121,10 +121,10 @@ def outlet():
 
     if not form.validate():
         return abort(400, description=form.errors)
-    apc_pdu = find_apc_pdu_by_hostname(form.IP.data)
+    apc_pdu = find_apc_pdu_by_hostname(form.pdu_hostname.data)
     session = Session(version=3, **apc_pdu)
-    outlet_index = form.OUTLET.data
-    requested_state = form.REQUESTED_STATE.data
+    outlet_index = form.outlet_index.data
+    requested_state = form.requested_state.data
 
     # Get state of the affected APC PDU power outlet
     query_outlet_state = session.get(f"{rPDUOutletStatusOutletState}.{outlet_index}")
@@ -155,7 +155,7 @@ def outlet():
     query_outlet_state = session.get(f"{rPDUOutletStatusOutletState}.{outlet_index}")
     json_response = {
         'state': outlet_state_dict.get(query_outlet_state.value, "UNKNOWN"),
-        'pdu_hostname': form.IP.data,
+        'pdu_hostname': form.pdu_hostname.data,
         'index': outlet_index,
     }
     app.logger.debug(f'JSON response: {pformat(json_response)}')
