@@ -28,6 +28,22 @@ def find_apc_pdu_by_hostname(hostname):
     return None
 
 
+def walk_outlets(session):
+    outlets = []
+    outlet_indices = session.walk(rPDUOutletStatusIndex)
+    outlet_names = session.walk(rPDUOutletStatusOutletName)
+    outlet_states = session.walk(rPDUOutletStatusOutletState)
+
+    for (index, name, state) in zip(outlet_indices, outlet_names, outlet_states):
+        outlets.append({
+            "index": index.value,
+            "name": name.value,
+            "state": outlet_state_dict.get(state.value, "UNKNOWN"),
+        })
+
+    return outlets
+
+
 @app.route("/system")
 def system():
 
@@ -83,20 +99,10 @@ def outlets():
         case 'REBOOT':
             session.set(rPDUOutletDevCommand, '4', snmp_type='INTEGER')
 
-    outlets = []
-    outlet_indices = session.walk(rPDUOutletStatusIndex)
-    outlet_names = session.walk(rPDUOutletStatusOutletName)
-    outlet_states = session.walk(rPDUOutletStatusOutletState)
-
     json_response = {
         'pdu_hostname': form.IP.data,
-        'outlets': {}
+        'outlets': walk_outlets(session),
     }
-    for (index, name, state) in zip(outlet_indices, outlet_names, outlet_states):
-        json_response['outlets'][index.value] = {
-            "name": name.value,
-            "state": outlet_state_dict.get(state.value, "UNKNOWN"),
-        }
     app.logger.debug(f'JSON response:\n{pformat(json_response)}')
     return json_response
 
@@ -156,18 +162,7 @@ def main_get():
 
         pdu_name = session.get('sysName.0').value
 
-        outlets = []
-        outlet_indices = session.walk(rPDUOutletStatusIndex)
-        outlet_names = session.walk(rPDUOutletStatusOutletName)
-        outlet_states = session.walk(rPDUOutletStatusOutletState)
-
-        for (index, name, state) in zip(outlet_indices, outlet_names, outlet_states):
-            outlets.append({
-                "index": index.value,
-                "name": name.value,
-                "state": {"1": "ON", "2": "OFF"}.get(state.value, "UNKNOWN"),
-            })
-
+        outlets = walk_outlets(session)
         app.logger.debug('Outlet state on APC PDU "%s" (%s):\n%s', pdu_name, apc_pdu['hostname'], pformat(outlets, sort_dicts=False))
 
         pdus.append({

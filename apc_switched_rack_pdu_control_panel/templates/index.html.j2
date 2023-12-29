@@ -294,10 +294,10 @@
     }
 
     function updateAllSwitchContainers(data) {
-      document.querySelectorAll("div[data-pdu-id=" + CSS.escape(data.pdu_hostname) + "]").forEach(item => {
-        let idx = item.getAttribute("data-outlet-index");
-        updateSwitchContainerItems(item, data['outlets'][idx]['state']);
-      });
+      for (const outlet of data.outlets) {
+        outlet.pdu_hostname = data.pdu_hostname;
+        updateSwitchContainer(outlet);
+      }
     }
 
     function updateSwitchContainer(data) {
