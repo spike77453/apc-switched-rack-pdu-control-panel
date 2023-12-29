@@ -1,2 +1,2 @@
-recursive-include apc_switched_rack_pdu_control_panel/templates *
-recursive-include apc_switched_rack_pdu_control_panel/static *
+recursive-include apc_switched_rack_pdu_control_panel/templates *.j2
+recursive-include apc_switched_rack_pdu_control_panel/static *.css *.js
