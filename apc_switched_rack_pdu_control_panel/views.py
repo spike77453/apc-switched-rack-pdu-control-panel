@@ -124,7 +124,6 @@ def outlet():
     apc_pdu = find_apc_pdu_by_hostname(form.pdu_hostname.data)
     session = Session(version=3, **apc_pdu)
     outlet_index = form.outlet_index.data
-    requested_state = form.requested_state.data
 
     # Get state of the affected APC PDU power outlet
     query_outlet_state = session.get(f"{rPDUOutletStatusOutletState}.{outlet_index}")
@@ -132,25 +131,20 @@ def outlet():
         return abort(500, description='Invalid SNMP response')
     # ON (1), OFF (2), REBOOT (3)
     current_state = outlet_state_dict.get(query_outlet_state.value, "UNKNOWN")
-    app.logger.debug(f"Current state: {current_state}, Requested state: {requested_state}")
+    app.logger.debug(f"Current state: {current_state}, Requested state: {form.requested_state.data}")
 
-    # If current state is ON (1) and requested state is OFF, change to OFF (2)
-    if current_state == 'ON' and requested_state == 'OFF':
-        session.set(f"{rPDUOutletControlOutletCommand}.{outlet_index}" , '2', snmp_type='INTEGER')
-
-    # If current state is OFF (2), and requested state is ON, change to ON (1)
-    elif current_state == 'OFF' and requested_state == 'ON':
-        session.set(f"{rPDUOutletControlOutletCommand}.{outlet_index}" , '1', snmp_type='INTEGER')
-
-    # REBOOT has been requested
-    elif requested_state ==  'REBOOT':
-        session.set(f"{rPDUOutletControlOutletCommand}.{outlet_index}" , '3', snmp_type='INTEGER')
-
-    elif requested_state == 'TOGGLE':
-        if current_state == 'ON':
-            session.set(f"{rPDUOutletControlOutletCommand}.{outlet_index}" , '2', snmp_type='INTEGER')
-        elif current_state == 'OFF':
+    match form.requested_state.data:
+        case 'ON':
             session.set(f"{rPDUOutletControlOutletCommand}.{outlet_index}" , '1', snmp_type='INTEGER')
+        case 'OFF':
+            session.set(f"{rPDUOutletControlOutletCommand}.{outlet_index}" , '2', snmp_type='INTEGER')
+        case 'REBOOT':
+            session.set(f"{rPDUOutletControlOutletCommand}.{outlet_index}" , '3', snmp_type='INTEGER')
+        case 'TOGGLE':
+            if current_state == 'ON':
+                session.set(f"{rPDUOutletControlOutletCommand}.{outlet_index}" , '2', snmp_type='INTEGER')
+            elif current_state == 'OFF':
+                session.set(f"{rPDUOutletControlOutletCommand}.{outlet_index}" , '1', snmp_type='INTEGER')
 
     query_outlet_state = session.get(f"{rPDUOutletStatusOutletState}.{outlet_index}")
     json_response = {
