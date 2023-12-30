@@ -32,7 +32,7 @@ APC_PDU_SETTINGS=/absolute/path/to/config.py gunicorn 'apc_switched_rack_pdu_con
 
 ### Supplying configuration data via flask instance folder
 
-Altnatively, loading configuration settings from a [flask instance folder](https://flask.palletsprojects.com/en/3.0.x/config/#instance-folders) is supported as well:
+Alternatively, loading configuration settings from a [flask instance folder](https://flask.palletsprojects.com/en/3.0.x/config/#instance-folders) is supported as well:
 
 ```
 mkdir -p $PREFIX/var/apc_switched_rack_pdu_control_panel-instance
