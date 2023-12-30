@@ -40,6 +40,7 @@ cd $PREFIX/var/apc_switched_rack_pdu_control_panel-instance
 curl -o config.py https://raw.githubusercontent.com/spike77453/apc-switched-rack-pdu-control-panel/python/instance/config.py.example
 ```
 
+In an activated [virtualenv](https://virtualenv.pypa.io/en/latest/) `$PREFIX` is equivalent to `$VIRTUAL_ENV`.  
 Configuration settings supplied via an instance folder always take precedence over configuration data supplied via the `APC_PDU_SETTINGS` environment variable.
 
 ---
